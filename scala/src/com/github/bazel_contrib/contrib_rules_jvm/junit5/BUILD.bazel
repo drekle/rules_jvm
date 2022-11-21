@@ -1,0 +1,55 @@
+load("@rules_java//java:defs.bzl", "java_binary", "java_library")
+load("//java/private:artifact.bzl", "artifact")
+
+# We want to be able to compile the test runner, but we don't want to
+# expose any of its dependencies, since we expect whoever is running
+# tests to add them themselves, and we don't want to pollute the classpath.
+# As such, we do this rather weird thing to make sure we have the runner
+# but none of its dependencies.
+java_import(
+    name = "junit5",
+    jars = [
+        ":junit5-copy-file",
+    ],
+    visibility = [
+        "//visibility:public",
+    ],
+)
+
+genrule(
+    name = "junit5-copy-file",
+    srcs = [":junit5-compile"],
+    outs = ["junit5-runner.jar"],
+    cmd = "cp $< $@",
+)
+
+java_library(
+    name = "junit5-compile",
+    srcs = glob(["*.java"]),
+    javacopts = [
+        # Target Java 11, no matter which JDK we're on so that we
+        # can be sure that `SecurityManager` is present, even if
+        # someone rebuilds on a JDK that doesn't have it.
+        "--release",
+        "11",
+    ],
+    deps = [
+        # The only dependencies here are those required to run
+        # a junit5 test. We try not to pollute the classpath, so
+        # be very careful when adding new deps here.
+        artifact("org.junit.jupiter:junit-jupiter-engine"),
+        artifact("org.junit.platform:junit-platform-commons"),
+        artifact("org.junit.platform:junit-platform-engine"),
+        artifact("org.junit.platform:junit-platform-launcher"),
+        artifact("org.junit.platform:junit-platform-reporting"),
+        artifact("org.opentest4j:opentest4j"),
+        artifact("junit:junit"),
+    ],
+)
+
+java_binary(
+    name = "JUnit5Runner",
+    main_class = "com.github.bazel_contrib.contrib_rules_jvm.junit5.JUnit5Runner",
+    visibility = ["//visibility:public"],
+    runtime_deps = [":junit5"],
+)

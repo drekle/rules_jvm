@@ -1,0 +1,9 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "logconfig",
+    srcs = ["config.go"],
+    importpath = "github.com/bazel-contrib/rules_jvm/scala/gazelle/private/logconfig",
+    visibility = ["//scala/gazelle:__subpackages__"],
+    deps = ["@com_github_rs_zerolog//:zerolog"],
+)

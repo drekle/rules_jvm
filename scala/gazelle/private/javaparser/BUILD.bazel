@@ -1,0 +1,15 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "javaparser",
+    srcs = ["javaparser.go"],
+    importpath = "github.com/bazel-contrib/rules_jvm/scala/gazelle/private/javaparser",
+    visibility = ["//scala/gazelle:__subpackages__"],
+    deps = [
+        "//scala/gazelle/private/java",
+        "//scala/gazelle/private/javaparser/proto/gazelle/java/javaparser/v0:javaparser",
+        "//scala/gazelle/private/servermanager",
+        "//scala/gazelle/private/sorted_set",
+        "@com_github_rs_zerolog//:zerolog",
+    ],
+)

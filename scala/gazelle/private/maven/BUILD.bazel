@@ -1,0 +1,36 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "maven",
+    srcs = [
+        "config.go",
+        "coordinate.go",
+        "resolver.go",
+        "test.go",
+    ],
+    importpath = "github.com/bazel-contrib/rules_jvm/scala/gazelle/private/maven",
+    visibility = ["//scala/gazelle:__subpackages__"],
+    deps = [
+        "//scala/gazelle/private/bazel",
+        "//scala/gazelle/private/maven/multiset",
+        "@bazel_gazelle//label:go_default_library",
+        "@com_github_rs_zerolog//:zerolog",
+    ],
+)
+
+go_test(
+    name = "maven_test",
+    size = "small",
+    srcs = [
+        "coordinate_test.go",
+        "resolver_test.go",
+        "test_test.go",
+    ],
+    data = glob(["testdata/**"]),
+    embed = [":maven"],
+    deps = [
+        "@bazel_gazelle//label:go_default_library",
+        "@com_github_rs_zerolog//:zerolog",
+        "@com_github_stretchr_testify//require",
+    ],
+)

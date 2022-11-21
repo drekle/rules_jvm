@@ -1,0 +1,85 @@
+load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
+load("//java/private:artifact.bzl", "artifact")
+load("//java/private:checkstyle_config.bzl", "checkstyle_binary", "checkstyle_config")
+load("//java/private:pmd_ruleset.bzl", "pmd_binary", "pmd_ruleset")
+load("//java/private:spotbugs_config.bzl", "spotbugs_binary", "spotbugs_config")
+
+package(default_visibility = ["//visibility:public"])
+
+# The Gazelle Java extension does not support our usage of @frozen_deps yet.
+# gazelle:exclude test
+
+alias(
+    name = "junit5-runner",
+    actual = "//java/src/com/github/bazel_contrib/contrib_rules_jvm/junit5",
+)
+
+exports_files([
+    "checkstyle-strict.xml",
+    "google-checks.xml",
+])
+
+checkstyle_config(
+    name = "checkstyle-default-config",
+    config_file = "google-checks.xml",
+)
+
+checkstyle_config(
+    name = "checkstyle-strict-config",
+    config_file = "checkstyle-strict.xml",
+)
+
+checkstyle_binary(
+    name = "checkstyle_cli",
+    runtime_deps = [
+        artifact("com.puppycrawl.tools:checkstyle"),
+    ],
+)
+
+pmd_binary(
+    name = "pmd",
+    runtime_deps = [
+        artifact("net.sourceforge.pmd:pmd-dist"),
+    ],
+)
+
+spotbugs_config(
+    name = "spotbugs-default-config",
+    effort = "default",
+    fail_on_warning = True,
+    spotbugs_binary = ":spotbugs_cli",
+)
+
+spotbugs_binary(
+    name = "spotbugs_cli",
+    runtime_deps = [
+        artifact("com.github.spotbugs:spotbugs"),
+        artifact("org.slf4j:slf4j-jdk14"),
+    ],
+)
+
+pmd_ruleset(
+    name = "pmd-config",
+    rulesets = [
+        "pmd-ruleset.xml",
+    ],
+    visibility = [
+        "//visibility:public",
+    ],
+)
+
+bzl_library(
+    name = "defs",
+    srcs = ["defs.bzl"],
+    deps = [
+        "//java/private:checkstyle",
+        "//java/private:checkstyle_config",
+        "//java/private:java_test_suite",
+        "//java/private:junit5",
+        "//java/private:library",
+        "//java/private:pmd",
+        "//java/private:pmd_ruleset",
+        "//java/private:spotbugs",
+        "//java/private:spotbugs_config",
+    ],
+)

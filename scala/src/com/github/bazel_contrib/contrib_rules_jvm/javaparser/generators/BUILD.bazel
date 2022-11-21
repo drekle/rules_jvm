@@ -16,7 +16,7 @@ java_library(
         "@contrib_rules_jvm_deps//:org_slf4j_slf4j_simple",  #keep
     ],
     deps = [
-        "//java/gazelle/private/javaparser/proto/gazelle/java/javaparser/v0:gazelle_java_build_v0_java_library",
+        "//scala/gazelle/private/javaparser/proto/gazelle/java/javaparser/v0:gazelle_java_build_v0_java_library",
         "@contrib_rules_jvm_deps//:com_google_code_findbugs_jsr305",
         "@contrib_rules_jvm_deps//:com_google_errorprone_error_prone_annotations",
         "@contrib_rules_jvm_deps//:com_google_guava_guava",
@@ -32,9 +32,6 @@ java_binary(
     name = "Main",
     classpath_resources = ["simplelogger.properties"],
     main_class = "com.github.bazel_contrib.contrib_rules_jvm.javaparser.generators.Main",
-    visibility = [
-        "//java/gazelle:__subpackages__",
-        "//scala/gazelle:__subpackages__",
-    ],
+    visibility = ["//scala/gazelle:__subpackages__"],
     runtime_deps = [":generators"],
 )

@@ -1,0 +1,9 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "bazel",
+    srcs = ["bazel.go"],
+    importpath = "github.com/bazel-contrib/rules_jvm/scala/gazelle/private/bazel",
+    visibility = ["//scala/gazelle:__subpackages__"],
+    deps = ["@io_bazel_rules_go//go/tools/bazel:go_default_library"],
+)
